@@ -1,4 +1,5 @@
 import time
+import argparse
 from examples.mnist import mnist
 import mlx.core as mx
 import mlx.nn as nn
@@ -22,9 +23,9 @@ class LeNet(nn.Module):
         super().__init__()
         self.conv0 = nn.Conv2d(in_channels=in_dims, out_channels=6, kernel_size=5, stride=1, padding=2)
         self.conv1 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, padding=0, stride=1)
-        self.conv2 = nn.Conv2d(in_channels=16, out_channels=120, kernel_size=5, stride=0, padding=1)
-        self.dense0 = nn.Linear(input_dims=120, output_dims=84)
-        self.dense1 = nn.Linear(input_dims=84, output_dims=num_classes)
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=256, kernel_size=5, stride=1, padding=0)
+        self.dense0 = nn.Linear(input_dims=256, output_dims=120)
+        self.dense1 = nn.Linear(input_dims=120, output_dims=num_classes)
 
     def num_params(self):
         nparams = sum(x.size for k, x in tree_flatten(self.parameters()))
@@ -81,4 +82,9 @@ def main():
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--cpu', help='disable using the GPU', action='store_true')
+    args = parser.parse_args()
+    if args.cpu:
+        mx.set_default_device(mx.cpu)
     main()
